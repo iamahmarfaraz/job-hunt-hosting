@@ -1,0 +1,24 @@
+/* From Uiverse.io by kennyotsu-monochromia */ 
+/* From Uiverse.io by adamgiebl */ 
+.neu-button {
+    background-color: #e0e0e0;
+    border-radius: 50px;
+    -webkit-box-shadow: inset 4px 4px 10px #bcbcbc, inset -4px -4px 10px #ffffff;
+            box-shadow: inset 4px 4px 10px #bcbcbc, inset -4px -4px 10px #ffffff;
+
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid rgb(206, 206, 206);
+  }
+  
+  .neu-button:hover {
+    -webkit-box-shadow: inset 2px 2px 5px #bcbcbc, inset -2px -2px 5px #ffffff, 2px 2px 5px #bcbcbc, -2px -2px 5px #ffffff;
+            box-shadow: inset 2px 2px 5px #bcbcbc, inset -2px -2px 5px #ffffff, 2px 2px 5px #bcbcbc, -2px -2px 5px #ffffff;
+  }
+  
+  .neu-button:focus {
+    outline: none;
+    -webkit-box-shadow: inset 2px 2px 5px #bcbcbc, inset -2px -2px 5px #ffffff, 2px 2px 5px #bcbcbc, -2px -2px 5px #ffffff;
+            box-shadow: inset 2px 2px 5px #bcbcbc, inset -2px -2px 5px #ffffff, 2px 2px 5px #bcbcbc, -2px -2px 5px #ffffff;
+  }
