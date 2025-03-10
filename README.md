@@ -1,6 +1,5 @@
 
 
-```markdown
 # Job Hunt Hosting
 
 Job Hunt Hosting is a full-stack job portal application that allows recruiters to post jobs and manage companies while students can search, apply, and interact with job posts and blogs. The application features robust user authentication, company management, job posting and application features, a blog section with contribution tracking, and real-time caching using Redis.
@@ -314,5 +313,5 @@ For more details, source code, and contributions, please visit our [GitHub Repos
 
 Happy coding and good luck with your job hunt!
 
-```
+
 
