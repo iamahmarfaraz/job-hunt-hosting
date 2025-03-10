@@ -36,8 +36,8 @@ const CategoryCarousel = () => {
   ];
 
   return (
-    <div className="bg-purple-200 relative mb-10 md:mb-0 overflow-hidden w-full h-full">
-      <BackgroundLines className="bg-purple-200 h-full flex gap-5  justify-center w-full flex-col px-4">
+    <div className="container-category relative  overflow-hidden w-full h-full">
+      <BackgroundLines className="container-category p-24 pt-7 h-full flex gap-5  justify-center w-full flex-col px-4">
         <div>
           <span className=" text-gray-700 text-5xl ml-3 font-bold">
             Top Pick

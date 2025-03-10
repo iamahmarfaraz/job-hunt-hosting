@@ -6,6 +6,7 @@ const authSlice = createSlice({
         loading:false,
         user:localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
         token:localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
+        changeDetector : false,
     },
     reducers:{
         // actions
@@ -17,8 +18,11 @@ const authSlice = createSlice({
         },
         setToken:(state, action) => {
             state.token = action.payload;
+        },
+        setChangeDetector :(state, action) => {
+            state.changeDetector = !state.changeDetector;
         }
     }
 });
-export const {setLoading, setUser, setToken} = authSlice.actions;
+export const {setLoading, setUser, setToken,setChangeDetector} = authSlice.actions;
 export default authSlice.reducer;

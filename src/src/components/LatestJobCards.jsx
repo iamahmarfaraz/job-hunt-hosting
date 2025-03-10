@@ -5,10 +5,11 @@ import ColourfulText from "./ui/colourful-text";
 import { useNavigate } from "react-router-dom";
 import "./LatestJobCards.css";
 
+
 const LatestJobCards = ({ job }) => {
   const navigate = useNavigate();
   return (
-    <PinContainer title="/companywebsite.com" href={`/description`}>
+    <PinContainer title={job?.company?.website} href={`/description/${job?._id}`}>
       <div className="flex p-2 gap-1">
         <div>
           <span className="bg-blue-500 inline-block center w-3 h-3 rounded-full"></span>
@@ -32,8 +33,8 @@ const LatestJobCards = ({ job }) => {
           <h2 className="font-semibold text-lg text-gray-800">{job?.title}</h2>
           <p className="text-gray-600">
             <p className="text-gray-600">
-              {job?.description.split(" ").slice(0, 20).join(" ") +
-                (job?.description.split(" ").length > 20 ? "..." : "")}
+              {job?.description.split(" ").slice(0, 12).join(" ") +
+                (job?.description.split(" ").length > 12 ? "..." : "")}
             </p>
           </p>
         </div>

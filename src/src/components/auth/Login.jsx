@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import "./auth.css";
 import { RadioGroup } from "../ui/radio-group";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,12 +11,15 @@ import { USER_API_END_POINT } from "@/utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setToken, setUser } from "@/redux/authSlice";
 import { Loader2 } from "lucide-react";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
+import useLogout from "@/hooks/useLogout";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading } = useSelector((store) => store.auth);
+  const logoutHandler = useLogout();
+  const {user} = useSelector(state=>state.auth);
 
   const [input, setInput] = useState({
     email: "",
@@ -34,7 +36,7 @@ const Login = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("LOGIN FORM INPUT FROM FRONTEND :- ", input);
+    
 
     const toastId = toast.loading("Loading...");
     try {
@@ -50,63 +52,60 @@ const Login = () => {
         throw new Error(res.data.message);
       }
 
-      // Token handling and storage
       const token = res.data.token;
       const decodedToken = jwtDecode(token);
-      const expirationTime = decodedToken.exp * 1000 - Date.now()
+      const expirationTime = decodedToken.exp * 1000 - Date.now();
 
-      // Dispatch token and user information to Redux
       dispatch(setToken(token));
       dispatch(setUser(res.data.user));
 
-      // Save user data in localStorage
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("token", JSON.stringify(res.data.token));
-      console.log("LOGIN API RESPONSE :- ", res);
+      
 
       if (res.data.success) {
         toast.success(res.data.message);
-        navigate("/jobs");
+        if (res.data.user.role === "student") {
+          navigate("/jobs");
+        }
+        else{
+          navigate("/admin/companies");
+        }
       } else {
         toast.error(res.data.message || "Something went wrong");
       }
-      // Set a timeout to log the user out automatically when the token expires
+
       setTimeout(() => {
-        
-        dispatch(logout(navigate));
-        const toastSes = toast.error("Session expired. Please log in again.")
+        logoutHandler();
+        const toastSes = toast.error("Session expired. Please log in again.");
         alert("Session expired. Please log in again.");
-        
         navigate("/login");
         toast.dismiss(toastSes);
       }, expirationTime);
     } catch (error) {
       console.log("ERROR WHILE LOGIN API CALL :- ", error);
-
-      // Handle error and show toast
       toast.error(
         error?.response?.data?.message || "Failed to login. Please try again."
       );
     } finally {
-      // Dismiss the loading toast in all cases
       toast.dismiss(toastId);
-
       dispatch(setLoading(false));
     }
   };
 
   return (
-    <div className="container min-w-full min-h-[100vh]">
-      <Navbar></Navbar>
-
-      <div className="flex items-center max-w-7xl justify-center mx-auto">
+    <div className="w-screen px-0 min-h-screen flex flex-col items-center mt-16 container-auth">
+      <Navbar />
+      {/* Push content down to avoid overlapping with navbar */}
+      <div className="flex flex-col items-center justify-center w-full px-4 sm:px-6 lg:px-8 mt-24">
         <form
           onSubmit={submitHandler}
-          className="w-1/2 border border-gray-300 rounded-md p-4 my-10 form-container flex flex-col gap-4"
+          className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 sm:p-8 md:p-10 lg:p-12"
         >
-          <h1 className="font-bold text-xl mb-5">Log in </h1>
+          <h1 className="text-2xl font-bold text-center mb-6">Log in</h1>
 
-          <div>
+          {/* Email Input */}
+          <div className="mb-4">
             <Label>
               Enter Your Email<sup className="text-red-500">*</sup>
             </Label>
@@ -115,11 +114,13 @@ const Login = () => {
               value={input.email}
               name="email"
               onChange={changeEventHandler}
-              placeholder="FullName@abc.com"
+              placeholder="example@domain.com"
+              className="w-full"
             />
           </div>
 
-          <div>
+          {/* Password Input */}
+          <div className="mb-4">
             <Label>
               Enter Your Password<sup className="text-red-500">*</sup>
             </Label>
@@ -129,56 +130,63 @@ const Login = () => {
               name="password"
               onChange={changeEventHandler}
               placeholder="*********"
+              className="w-full"
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <RadioGroup
-              defaultValue="comfortable"
-              className="flex items-center gap-[4.2rem] my-2 mx-2"
-            >
-              <div className="flex items-center -space-x-3 ">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={input.role === "student"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r1">Student</Label>
-              </div>
+          {/* Role Selection */}
+<div className="mb-4 w-full">
+  <Label className="block mb-2">Select Your Role:</Label>
+  <RadioGroup className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-2 w-full">
+    {/* Student Role */}
+    <label className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
+      <Input
+        type="radio"
+        name="role"
+        value="student"
+        checked={input.role === "student"}
+        onChange={changeEventHandler}
+        className="w-4 h-4 cursor-pointer"
+      />
+      <span className="text-sm sm:text-base">Student</span>
+    </label>
 
-              <div className="flex items-center -space-x-3">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="recruiter"
-                  checked={input.role === "recruiter"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r2">Recruiter</Label>
-              </div>
-            </RadioGroup>
+    {/* Recruiter Role */}
+    <label className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
+      <Input
+        type="radio"
+        name="role"
+        value="recruiter"
+        checked={input.role === "recruiter"}
+        onChange={changeEventHandler}
+        className="w-4 h-4 cursor-pointer"
+      />
+      <span className="text-sm sm:text-base">Recruiter</span>
+    </label>
+  </RadioGroup>
+</div>
+
+          {/* Submit Button */}
+          <div className="mb-4">
+            {loading ? (
+              <Button className="w-full flex justify-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait...
+              </Button>
+            ) : (
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            )}
           </div>
 
-          {loading ? (
-            <Button className="w-full -mb-2">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Please wait...
-            </Button>
-          ) : (
-            <Button type="submit" className="w-full -mb-2">
-              Login
-            </Button>
-          )}
-          <span className="text-gray-700 ml-1 text-sm">
+          {/* Signup Link */}
+          <div className="text-center text-gray-600">
             Don't have an account?{" "}
             <Link to="/signup" className="text-blue-600">
               Sign up
             </Link>
-          </span>
+          </div>
         </form>
       </div>
     </div>

@@ -7,6 +7,8 @@ import axios from "axios";
 import { Skeleton } from "./ui/skeleton";
 import { Switch } from "./ui/switch";
 import "./FilterSidebar.css";
+import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Large dataset for various job roles & skills
 const largeJobDataset = [
@@ -445,12 +447,18 @@ const defaultFilterData = [
   },
 ];
 
-const FilterCard = () => {
+const FilterSidebar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [selectedValue, setSelectedValue] = useState("");
   const [filterData, setFilterData] = useState(defaultFilterData);
   const [loadingLocation, setLoadingLocation] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Toggle sidebar visibility
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   // Fetch top 5 cities of the user's country
   const fetchTopCities = async (country) => {
@@ -462,7 +470,7 @@ const FilterCard = () => {
       const cities = response.data.localityInfo.administrative
         .map((city) => city.name)
         .slice(0, 5);
-      console.log("CITIES :- ", cities);
+      
 
       if (cities.length > 0) {
         setFilterData((prev) =>
@@ -547,67 +555,128 @@ const FilterCard = () => {
     getUserCountry();
   }, []);
 
+  useEffect(() => {
+    // Reset search query to empty when the page loads
+    dispatch(setSearchedQuery(""));
+  }, [dispatch]);
+
   // Update searched query when filter changes
   useEffect(() => {
-    dispatch(setSearchedQuery(selectedValue));
+    if (selectedValue) {
+      dispatch(setSearchedQuery(selectedValue));
+    }
   }, [selectedValue, dispatch]);
 
   return (
-    <div className="w-full bg-slate-100 p-7 rounded-md border-r-[1px] border-t-[1px] border-b-2 shadow-2xl h-[100vh]">
-      <h1 className="font-bold text-lg text-slate-800">Filter Jobs</h1>
-      <hr className="mt-2 mb-2 border-t-2 border-slate-300 rounded-sm" />
+    <>
+      {/* Mobile Sidebar Button */}
+      <div className="md:hidden fixed top-16 left-5 z-50">
+        <button onClick={toggleSidebar} className="p-2 rounded-md shadow-md">
+          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
-      <RadioGroup
-        value={selectedValue}
-        onValueChange={(value) => {
-          setSelectedValue(value);
-          console.log("Value Changed:", value);
-          console.log("selectedValue :- ", selectedValue);
-        }}
-      >
-        {filterData.map((data, index) => (
-          <div key={index} className="flex flex-col">
-            <h1 className="font-bold text-lg text-slate-600">{data.filterType}</h1>
-            {loadingLocation && data.filterType === "Location" ? (
-              <div className="flex items-center p-4 space-x-4">
-                <Skeleton className="h-10 w-10 rounded-full bg-gray-300" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-[110px] bg-gray-300" />
-                  <Skeleton className="h-4 w-[80px] bg-gray-300" />
+      {/* Sidebar - Responsive */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            exit={{ x: -300 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden fixed top-0 left-0 w-3/4 h-full bg-gray-200 shadow-lg z-50 p-6 pt-16"
+          >
+            {/*  Close Button inside Sidebar */}
+            <button
+              onClick={toggleSidebar}
+              className="absolute top-4 right-4 z-50 bg-gray-300 p-2 rounded-full"
+            >
+              <X size={24} />
+            </button>
+
+            <h1 className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500">
+              Filter Jobs
+            </h1>
+            <div className="mt-3 w-full h-[2px] rounded-3xl bg-gray-400" />
+
+            <RadioGroup
+              value={selectedValue}
+              onValueChange={(value) => setSelectedValue(value)}
+            >
+              {filterData.map((data, index) => (
+                <div key={index} className="flex flex-col">
+                  <h1 className="font-bold text-lg mt-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-red-500 to-pink-500">
+                    {data.filterType}
+                  </h1>
+                  {loadingLocation && data.filterType === "Location" ? (
+                    <Skeleton className="h-4 w-[80px] bg-gray-300" />
+                  ) : (
+                    data.array.map((item, idx) => {
+                      const itemId = `id${index}-${idx}`;
+                      return (
+                        <div
+                          key={itemId}
+                          className="flex items-center space-x-2 my-2"
+                        >
+                          <RadioGroupItem
+                            value={item}
+                            id={itemId}
+                            className="invisible"
+                          />
+                          <Label htmlFor={itemId} className="text-blue-500">
+                            {item}
+                          </Label>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
-              </div>
-            ) : (
-              data.array.map((item, idx) => {
-                const itemId = `id${index}-${idx}`;
-                return (
-                  <div
-                    key={itemId}
-                    className="flex items-center space-x-2 my-2 "
-                  >
-                    <RadioGroupItem
-                      value={item}
-                      id={itemId}
-                      className="fltrIpt"
-                    />
-                    <Label
-                      htmlFor={itemId}
-                      className={
-                        selectedValue === item
-                          ? "bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500  text-white bg-clip-text text-transparent bg-no-repeat"
-                          : "text-center text-blue-400 "
-                      }
+              ))}
+            </RadioGroup>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block w-full p-6 px-7 h-screen rounded-md bg-gray-200 ">
+        <h1 className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500">
+          Filter Jobs
+        </h1>
+        <div className="mt-3 w-full h-[2px] rounded-3xl bg-gray-400" />
+
+        <RadioGroup
+          value={selectedValue}
+          onValueChange={(value) => setSelectedValue(value)}
+        >
+          {filterData.map((data, index) => (
+            <div key={index} className="flex flex-col">
+              <h1 className="font-bold text-lg mt-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-red-500 to-pink-500">
+                {data.filterType}
+              </h1>
+              {loadingLocation && data.filterType === "Location" ? (
+                <Skeleton className="h-4 w-[80px] bg-gray-300" />
+              ) : (
+                data.array.map((item, idx) => {
+                  const itemId = `id${index}-${idx}`;
+                  return (
+                    <div
+                      key={itemId}
+                      className="flex items-center space-x-2 my-2"
                     >
-                      {item}
-                    </Label>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        ))}
-      </RadioGroup>
-    </div>
+                      <RadioGroupItem value={item} id={itemId} className="" />
+                      <Label htmlFor={itemId} className="text-blue-500">
+                        {item}
+                      </Label>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+    </>
   );
 };
 
-export default FilterCard;
+export default FilterSidebar;

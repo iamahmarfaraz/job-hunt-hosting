@@ -4,18 +4,20 @@ import FilterSidebar from './FilterSidebar';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import Job from './Job';
+import './Jobs.css';
 
 const Jobs = () => {
     const { allJobs = [], searchedQuery } = useSelector(store => store.job);
     const [filterJobs, setFilterJobs] = useState([]);
 
     useEffect(() => {
+        
         if (!allJobs || allJobs.length === 0) {
             setFilterJobs([]);
             return;
         }
 
-        // Define salary filter options locally
+        // Monthly Salary Ranges
         const salaryRanges = [
             "0-40k",
             "42k-100k",
@@ -26,21 +28,21 @@ const Jobs = () => {
 
         if (searchedQuery) {
             const filteredJobs = allJobs.filter((job) => {
-                const jobSalary = job.salary * 100000;
+                const jobMonthlySalary = (job.salary * 100000) / 12; // Convert LPA to Monthly Salary
                 const isSalaryRange = salaryRanges.includes(searchedQuery);
                 let isSalaryMatch = false;
 
                 if (isSalaryRange) {
-                    const [min, max] = searchedQuery
-                        .replace("k", "000")
-                        .replace("M", "000000")
-                        .split("-")
-                        .map(Number);
+                    const [minStr, maxStr] = searchedQuery.split("-");
+                    const min = parseInt(minStr.replace("k", "000").replace("M", "000000"), 10);
+                    const max = maxStr ? parseInt(maxStr.replace("k", "000").replace("M", "000000"), 10) : null;
+
+                    console.log(`Job: ${job.title}, Salary: ₹${job.salary}LPA, Monthly: ₹${jobMonthlySalary}, Range: ${min} - ${max}`);
 
                     if (!isNaN(min) && !isNaN(max)) {
-                        isSalaryMatch = jobSalary >= min && jobSalary <= max;
-                    } else if (!isNaN(min) && isNaN(max)) {
-                        isSalaryMatch = jobSalary >= min; // Handle "1M+" case
+                        isSalaryMatch = jobMonthlySalary >= min && jobMonthlySalary <= max;
+                    } else if (!isNaN(min) && max === null) {
+                        isSalaryMatch = jobMonthlySalary >= min; // Handle "1M+" case
                     }
                 }
 
@@ -59,20 +61,20 @@ const Jobs = () => {
     }, [allJobs, searchedQuery]);
 
     return (
-        <div>
-            <div className='w-full bg-purple-200'>
+        <div className='w-full'>
+            <div>
                 <Navbar />
             </div>
-
-            <div className='max-w-7xl '>
-                <div className='flex justify-between gap-5'>
-                    <div className='w-20%'>
+            
+            <div className='w-full container-jobs mt-[67px] h-[100vh] overflow-x-hidden'>
+                <div className='flex gap-5'>
+                    <div className='w-20% border-t-[1px] border-r-[1px] border-b-[1px] shadow-2xl min-h-screen rounded-lg'>
                         <FilterSidebar />
                     </div>
                     {
-                        filterJobs.length <= 0 ? <span>Job not found</span> : (
-                            <div className='flex-1 h-[88vh] mt-5 overflow-y-auto pb-5'>
-                                <div className='grid grid-cols-3 gap-4'>
+                        filterJobs.length <= 0 ? <span className='flex items-center justify-center w-full'>Job not found</span> : (
+                            <div className='flex-1 h-[100vh] overflow-y-auto pb-5 mt-10 lg:mt-0 overflow-x-hidden'>
+                                <div className='grid mt-8 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 px-10 '>
                                     {
                                         filterJobs.map((job) => (
                                             <motion.div

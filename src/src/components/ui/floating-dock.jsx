@@ -44,7 +44,7 @@ const FloatingDockMobile = ({
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}>
                 <Link
-                  href={item.href}
+                  to={item.href}
                   key={item.title}
                   className="h-10 w-10 rounded-full bg-gray-50 dark:bg-neutral-900 flex items-center justify-center">
                   <div className="h-4 w-4">{item.icon}</div>
@@ -83,17 +83,11 @@ const FloatingDockDesktop = ({
   );
 };
 
-function IconContainer({
-  mouseX,
-  title,
-  icon,
-  href
-}) {
+function IconContainer({ mouseX, title, icon, href }) {
   let ref = useRef(null);
 
   let distance = useTransform(mouseX, (val) => {
     let bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-
     return val - bounds.x - bounds.width / 2;
   });
 
@@ -128,30 +122,34 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    (<Link href={href}>
+    <a href={href} target="_blank" rel="noopener noreferrer">
       <motion.div
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center relative">
+        className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center relative"
+      >
         <AnimatePresence>
           {hovered && (
             <motion.div
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="px-2 py-0.5 whitespace-pre rounded-md bg-gray-100 border dark:bg-neutral-800 dark:border-neutral-900 dark:text-white border-gray-200 text-neutral-700 absolute left-1/2 -translate-x-1/2 -top-8 w-fit text-xs">
+              className="px-2 py-0.5 whitespace-pre rounded-md bg-gray-100 border dark:bg-neutral-800 dark:border-neutral-900 dark:text-white border-gray-200 text-neutral-700 absolute left-1/2 -translate-x-1/2 -top-8 w-fit text-xs"
+            >
               {title}
             </motion.div>
           )}
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center">
+          className="flex items-center justify-center"
+        >
           {icon}
         </motion.div>
       </motion.div>
-    </Link>)
+    </a>
   );
 }
+

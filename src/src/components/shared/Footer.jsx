@@ -17,7 +17,7 @@ const Footer = () => {
       icon: (
         <IconBrandFacebook className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://www.facebook.com/share/1MKcgCeLTg/?mibextid=wwXIfr",
     },
 
     {
@@ -25,14 +25,14 @@ const Footer = () => {
       icon: (
         <IconBrandInstagram className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://www.instagram.com/iamahmarfaraz",
     },
     {
       title: "LeetCode",
       icon: (
         <IconBrandLeetcode className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://leetcode.com/u/ahmarfaraz9/",
     },
     {
       title: "Ahmar",
@@ -53,7 +53,7 @@ const Footer = () => {
       icon: (
         <IconBrandLinkedin className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://www.linkedin.com/in/iamahmarfaraz/",
     },
 
     {
@@ -61,14 +61,14 @@ const Footer = () => {
       icon: (
         <IconBrandX className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://x.com/ahmarfaraz10?s=21",
     },
     {
       title: "GitHub",
       icon: (
         <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: "#",
+      href: "https://github.com/iamahmarfaraz",
     },
   ];
   return (

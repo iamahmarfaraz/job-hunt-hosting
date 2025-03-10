@@ -62,7 +62,7 @@ const Signup = () => {
         withCredentials: true,
       });
 
-      console.log("SIGNUP API RESPONSE :- ", res);
+      
 
       if (res.data.success) {
         toast.success(res.data.message);
@@ -72,33 +72,32 @@ const Signup = () => {
       }
     } catch (error) {
       console.log("ERROR WHILE SIGNUP API CALL :- ", error);
-
-      // Display an error toast
       toast.error(
         error?.response?.data?.message || "Failed to signup. Please try again."
       );
     } finally {
-      // Dismiss the loading toast in all cases
       toast.dismiss(toastId);
-
       dispatch(setLoading(false));
     }
   };
 
   return (
-    <div className="container min-w-full min-h-[100vh]">
-      <Navbar></Navbar>
+    <div className=" min-w-full min-h-screen flex flex-col">
+      <div className="w-full h-16 bg-slate-300 shadow-2xl">
+        <Navbar />
+      </div>
 
-      <div className="flex items-center max-w-7xl justify-center mx-auto">
+      {/* Centered Form */}
+      <div className="flex items-start pt-10 px-4 md:px-0 justify-center  container-auth mx-auto w-full min-h-screen">
         <form
           onSubmit={submitHandler}
-          className="w-1/2 border border-gray-300 rounded-md p-4 my-10 form-container flex flex-col gap-4"
+          className="w-full md:w-2/3 lg:w-1/2 border border-gray-300 rounded-md p-6 my-10 bg-white shadow-lg flex flex-col gap-4"
         >
-          <h1 className="font-bold text-xl mb-5">Sign Up</h1>
+          <h1 className="font-bold text-xl mb-5 text-center">Sign Up</h1>
 
           <div>
             <Label>
-              Enter Your Full Name<sup className="text-red-500">*</sup>
+              Full Name <sup className="text-red-500">*</sup>
             </Label>
             <Input
               type="text"
@@ -106,12 +105,13 @@ const Signup = () => {
               name="fullname"
               onChange={changeEventHandler}
               placeholder="Full Name"
+              className="w-full"
             />
           </div>
 
           <div>
             <Label>
-              Enter Your Email<sup className="text-red-500">*</sup>
+              Email <sup className="text-red-500">*</sup>
             </Label>
             <Input
               type="email"
@@ -119,12 +119,13 @@ const Signup = () => {
               name="email"
               onChange={changeEventHandler}
               placeholder="xyz@abc.com"
+              className="w-full"
             />
           </div>
 
           <div>
             <Label>
-              Enter Your Phone Number<sup className="text-red-500">*</sup>
+              Phone Number <sup className="text-red-500">*</sup>
             </Label>
             <Input
               type="text"
@@ -132,12 +133,13 @@ const Signup = () => {
               name="phoneNumber"
               onChange={changeEventHandler}
               placeholder="8609812654"
+              className="w-full"
             />
           </div>
 
           <div>
             <Label>
-              Enter Your Password<sup className="text-red-500">*</sup>
+              Password <sup className="text-red-500">*</sup>
             </Label>
             <Input
               type="password"
@@ -145,41 +147,45 @@ const Signup = () => {
               name="password"
               onChange={changeEventHandler}
               placeholder="*********"
+              className="w-full"
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <RadioGroup
-              defaultValue="comfortable"
-              className="flex items-center gap-[4.2rem] my-2 mx-2"
-            >
-              <div className="flex items-center -space-x-3 ">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={input.role === "student"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r1">Student</Label>
-              </div>
+          {/* Role Selection & File Upload */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Role Selection */}
+            <div className="flex flex-col sm:w-1/2">
+              <Label>Role</Label>
+              <RadioGroup className="flex items-center gap-4 mt-1">
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="radio"
+                    name="role"
+                    value="student"
+                    checked={input.role === "student"}
+                    onChange={changeEventHandler}
+                    className="w-4 h-4 cursor-pointer"
+                  />
+                  <Label>Student</Label>
+                </div>
 
-              <div className="flex items-center -space-x-3">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="recruiter"
-                  checked={input.role === "recruiter"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r2">Recruiter</Label>
-              </div>
-            </RadioGroup>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="radio"
+                    name="role"
+                    value="recruiter"
+                    checked={input.role === "recruiter"}
+                    onChange={changeEventHandler}
+                    className="w-4 h-4 cursor-pointer"
+                  />
+                  <Label>Recruiter</Label>
+                </div>
+              </RadioGroup>
+            </div>
 
-            <div className="flex items-center gap-2 w-1/2">
-              <Label>Profile</Label>
+            {/* File Upload */}
+            <div className="flex flex-col sm:w-1/2">
+              <Label>Profile Picture</Label>
               <Input
                 accept="image/*"
                 onChange={changeFileHandler}
@@ -189,6 +195,7 @@ const Signup = () => {
             </div>
           </div>
 
+          {/* Signup Button */}
           {loading ? (
             <Button className="w-full mt-4 -mb-2">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -199,7 +206,9 @@ const Signup = () => {
               Signup
             </Button>
           )}
-          <span className="text-gray-700 ml-1 text-sm">
+
+          {/* Login Redirect */}
+          <span className="text-gray-700 text-sm text-center mt-3">
             Already have an account?{" "}
             <Link to="/login" className="text-blue-600">
               Login

@@ -8,7 +8,7 @@ import useGetAllJobs from "@/hooks/useGetAllJobs";
 const LatestJobs = () => {
   useGetAllJobs();
   const {allJobs} = useSelector(store=>store.job);
-  console.log("alljobs :-",allJobs);
+  
   return (
     
     <div className="w-full flex flex-col p-5 pt-10 gap-5 mx-auto">
