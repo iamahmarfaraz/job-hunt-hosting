@@ -1,3 +1,5 @@
 import Redis from "ioredis";
-const redisClient = new Redis(); // Connects to Redis instance
+import dotenv from "dotenv";
+dotenv.config();
+const redisClient = new Redis(process.env.REDIS_URL); // Connects to Redis instance
 export default redisClient;
