@@ -4,8 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "nodemon server/index.js",
+    "dev": "nodemon server/index.js",
+    "build" : "npm install && npm install --prefix src && npm run build --prefix src"
   },
   "author": "",
   "license": "ISC",

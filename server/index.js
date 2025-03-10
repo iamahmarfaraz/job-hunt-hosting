@@ -6,6 +6,7 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import fileUpload from 'express-fileupload';
+import path from "path";
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -31,6 +32,8 @@ app.use(
     })
 );
 
+const __dirname = path.resolve();
+
 // app.use(
 //     fileUpload({
 //         useTempFiles:true,
@@ -52,6 +55,11 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/blog",blogRoute)
+
+app.use(express.static(path.join(__dirname, "/src/dist")));
+app.get('*', (req,res) => {
+    res.sendFile(path.resolve(__dirname, "src", "dist", "index.html"));
+})
 
 
 // database.connect();
